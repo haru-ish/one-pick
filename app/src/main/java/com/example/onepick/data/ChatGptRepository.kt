@@ -1,7 +1,6 @@
 package com.example.onepick.data
 
 import com.example.onepick.model.Movie
-import com.example.onepick.network.ChatGptApi
 import com.example.onepick.network.ChatGptApiService
 
 
@@ -15,11 +14,10 @@ interface ChatGptRepository {
      * chatGPTApiから映画名を取得するリポジトリのネットワーク実装
      */
     class NetworkChatGPTRepository(
-        //private val chatGPTApiService: ChatGptApiService
+        private val chatGptApiService: ChatGptApiService
     ) : ChatGptRepository {
-        override suspend fun getRecommendedMovie(keyword1: String, keyword2: String, keyword3: String): Movie {
-            return ChatGptApi.retrofitService.getRecommendedMovie(keyword1, keyword2, keyword3)
-        }
+        override suspend fun getRecommendedMovie(keyword1: String, keyword2: String, keyword3: String): Movie =
+            chatGptApiService.getRecommendedMovie(keyword1, keyword2, keyword3)
     }
 }
 
