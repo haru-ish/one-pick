@@ -7,11 +7,11 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 
-interface AppContainer {
+interface ChatGptContainer {
     val chatGptRepository: ChatGptRepository
 }
 
-class DefaultAppContainer : AppContainer {
+class DefaultChatGptContainer : ChatGptContainer {
 
     private val baseUrl = BuildConfig.CHATGPT_API_KEY
 
