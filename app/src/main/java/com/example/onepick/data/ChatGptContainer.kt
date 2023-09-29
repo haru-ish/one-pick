@@ -23,7 +23,7 @@ class DefaultChatGptContainer : ChatGptContainer {
         .baseUrl(baseUrl)
         .build()
 
-    //  クラス外からアクセスする必要がないためprivateに設定
+    // クラス外からアクセスする必要がないためprivateに設定
     private val retrofitService: ChatGptApiService by lazy {
         // retrofitServiceを初期化
         retrofit.create(ChatGptApiService::class.java)
