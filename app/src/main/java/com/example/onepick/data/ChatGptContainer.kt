@@ -1,6 +1,5 @@
 package com.example.onepick.data
 
-import com.example.onepick.BuildConfig
 import com.example.onepick.network.ChatGptApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -13,7 +12,7 @@ interface ChatGptContainer {
 
 class DefaultChatGptContainer : ChatGptContainer {
 
-    private val baseUrl = BuildConfig.CHATGPT_API_KEY
+    private val baseUrl = "https://api.openai.com/"
 
     /**
      * kotlinx.serializationコンバーターを使用したRetrofitビルダーを使用して、Retrofitオブジェクトを構築
