@@ -1,6 +1,5 @@
 package com.example.onepick.ui.screens
 
-import android.text.Spannable.Factory
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,18 +14,20 @@ import com.example.onepick.data.ChatGptRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import com.example.onepick.data.ChatGptRequest
+import com.example.onepick.data.Message
 
 /**
  * 画面のUI状態
  */
 sealed interface OnePickUiState {
-    data class Success(val title: String) : OnePickUiState
-    object Error : OnePickUiState
+    data class Success(val content: String) : OnePickUiState
+    data class Error(val msg: String) : OnePickUiState
     object Loading : OnePickUiState
     object Initial : OnePickUiState
 }
 
-class MovieViewModel(private val chatGptRepository: ChatGptRepository) : ViewModel() {
+class ChatGptViewModel(private val chatGptRepository: ChatGptRepository) : ViewModel() {
 
     /** 最新のリクエストのステータスを保存するミュータブルなステート */
     // MarsUiStateを初期状態で初期化し、画面が初期状態の場合にAPI通信を行わないように制御
@@ -41,14 +42,24 @@ class MovieViewModel(private val chatGptRepository: ChatGptRepository) : ViewMod
         viewModelScope.launch {
             onePickUiState = OnePickUiState.Loading
             onePickUiState = try {
-                val result = chatGptRepository.getRecommendedMovie(keyword1, keyword2, keyword3)
+                val prompt = "「${keyword1}」「${keyword2}」「${keyword3}」の3つに当てはまる映画を一つおすすめしてほしいです。" +
+                        "映画名だけ返してくれますか？"
+                val request = ChatGptRequest(
+                    model = "gpt-3.5-turbo",
+                    messages = listOf(
+                        Message(role = "system", content = "You are a helpful assistant."),
+                        Message(role = "user", content = prompt)
+                    )
+                )
+                val response = chatGptRepository.getRecommendedMovie(request)
+
                 OnePickUiState.Success(
-                    "${result.title}"
+                    response.choices[0].message.content
                 )
             } catch (e: IOException) {
-                OnePickUiState.Error
+                OnePickUiState.Error(e.toString())
             } catch (e: HttpException) {
-                OnePickUiState.Error
+                OnePickUiState.Error(e.toString())
             }
         }
     }
@@ -60,7 +71,7 @@ class MovieViewModel(private val chatGptRepository: ChatGptRepository) : ViewMod
             initializer {
                 val application = (this[APPLICATION_KEY] as ChatGptApplication)
                 val chatGptRepository = application.container.chatGptRepository
-                MovieViewModel(chatGptRepository = chatGptRepository)
+                ChatGptViewModel(chatGptRepository = chatGptRepository)
             }
         }
     }
