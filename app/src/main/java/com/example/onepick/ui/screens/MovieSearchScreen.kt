@@ -2,6 +2,7 @@
 
 package com.example.onepick.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,26 +22,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.onepick.ui.OnePickUiState
 import com.example.onepick.ui.theme.OnePickTheme
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun MovieSearchScreen(
-    onePickUiState: OnePickUiState, modifier: Modifier = Modifier
+    chatGptViewModel: ChatGptViewModel,
+    tmdbViewModel: TmdbViewModel,
+    sharedViewModel: SharedViewModel,
+    modifier: Modifier = Modifier
 ){
-    when (onePickUiState) {
-        is OnePickUiState.Initial -> InitialScreen(modifier = modifier.fillMaxSize())
+    val uiState by sharedViewModel.uiState.collectAsState()
+
+    when (uiState) {
+        is OnePickUiState.Initial -> InitialScreen(chatGptViewModel ,modifier = modifier.fillMaxSize())
         is OnePickUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is OnePickUiState.Success -> ResultScreen(
-            onePickUiState.content, modifier = modifier.fillMaxWidth()
+            (uiState as OnePickUiState.Success).content, modifier = modifier.fillMaxWidth()
         )
-
-        is OnePickUiState.Error -> ErrorScreen( onePickUiState.msg ,modifier = modifier.fillMaxSize())
+        is OnePickUiState.Error -> ErrorScreen( (uiState as OnePickUiState.Error).msg ,modifier = modifier.fillMaxSize())
+        else -> {}
     }
 }
 
 @Composable
 fun InitialScreen(
-    chatGptViewModel: ChatGptViewModel = viewModel(),
+    chatGptViewModel: ChatGptViewModel,
     modifier: Modifier = Modifier) {
 
     var keyword1 by remember { mutableStateOf("") }
@@ -123,6 +133,5 @@ fun ResultScreen(content: String, modifier: Modifier = Modifier) {
 @Composable
 fun OnePickAppPreview() {
     OnePickTheme {
-        InitialScreen()
     }
 }

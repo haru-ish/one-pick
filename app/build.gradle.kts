@@ -3,6 +3,9 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
+//    kotlin("kapt")
+//    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -23,8 +26,10 @@ android {
         val localProperties = Properties()
         localProperties.load(project.rootProject.file("local.properties").inputStream())
         val chatGptApiKey = localProperties.getProperty("chatgpt_api_key")
+        val tmdbApiKey = localProperties.getProperty("tmdb_api_key")
 
         buildConfigField("String", "CHATGPT_API_KEY", "\"$chatGptApiKey\"")
+        buildConfigField("String", "TMDB_API_KEY", "\"$tmdbApiKey\"")
     }
 
     buildTypes {
@@ -62,7 +67,7 @@ dependencies {
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    // implementation("com.squareup.okhttp3:okhttp:4.11.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
@@ -75,7 +80,14 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    
+
+    // Hilt
+//    implementation("com.google.dagger:hilt-android:2.44")
+//
+//    implementation("androidx.activity:activity-ktx:1.7.2")
+//    implementation("androidx.fragment:fragment-ktx:1.6.1")
+//    implementation("androidx.compose.material:material:1.3.1")
+
     implementation("androidx.compose.ui:ui-graphics")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -84,4 +96,12 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    // Hilt
+//    kapt("com.google.dagger:hilt-android-compiler:2.44")
+
 }
+
+// Allow references to generated code
+//kapt {
+//    correctErrorTypes = true
+//}
