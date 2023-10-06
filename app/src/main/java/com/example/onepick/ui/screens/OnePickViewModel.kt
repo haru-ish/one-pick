@@ -16,21 +16,12 @@ import retrofit2.HttpException
 import java.io.IOException
 import com.example.onepick.data.ChatGptRequest
 import com.example.onepick.data.Message
-
-/**
- * 画面のUI状態
- */
-sealed interface OnePickUiState {
-    data class Success(val content: String) : OnePickUiState
-    data class Error(val msg: String) : OnePickUiState
-    object Loading : OnePickUiState
-    object Initial : OnePickUiState
-}
+import com.example.onepick.ui.OnePickUiState
 
 class OnePickViewModel(private val chatGptRepository: ChatGptRepository) : ViewModel() {
 
     /** 最新のリクエストのステータスを保存するミュータブルなステート */
-    // MarsUiStateを初期状態で初期化し、画面が初期状態の場合にAPI通信を行わないように制御
+    // UiStateを初期状態で初期化し、画面が初期状態の場合にAPI通信を行わないように制御
     var onePickUiState: OnePickUiState by mutableStateOf(OnePickUiState.Initial)
         private set
 
