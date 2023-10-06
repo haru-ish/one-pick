@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.10"
 }
 
 android {
@@ -23,8 +24,10 @@ android {
         val localProperties = Properties()
         localProperties.load(project.rootProject.file("local.properties").inputStream())
         val chatGptApiKey = localProperties.getProperty("chatgpt_api_key")
+        val tmdbApiKey = localProperties.getProperty("tmdb_api_key")
 
         buildConfigField("String", "CHATGPT_API_KEY", "\"$chatGptApiKey\"")
+        buildConfigField("String", "TMDB_API_KEY", "\"$tmdbApiKey\"")
     }
 
     buildTypes {
