@@ -8,8 +8,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.onepick.ui.screens.ChatGptViewModel
 import com.example.onepick.ui.screens.MovieSearchScreen
+import com.example.onepick.ui.screens.OnePickViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,8 +21,8 @@ fun OnePickApp() {
                 .fillMaxSize()
                 .padding(it)
         ) {
-            val chatGptViewModel: ChatGptViewModel = viewModel(factory = ChatGptViewModel.Factory)
-            MovieSearchScreen(onePickUiState = chatGptViewModel.onePickUiState)
+            val onePickViewModel: OnePickViewModel = viewModel(factory = OnePickViewModel.Factory)
+            MovieSearchScreen(onePickUiState = onePickViewModel.onePickUiState)
         }
     }
 }

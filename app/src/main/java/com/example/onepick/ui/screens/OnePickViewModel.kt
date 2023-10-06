@@ -27,7 +27,7 @@ sealed interface OnePickUiState {
     object Initial : OnePickUiState
 }
 
-class ChatGptViewModel(private val chatGptRepository: ChatGptRepository) : ViewModel() {
+class OnePickViewModel(private val chatGptRepository: ChatGptRepository) : ViewModel() {
 
     /** 最新のリクエストのステータスを保存するミュータブルなステート */
     // MarsUiStateを初期状態で初期化し、画面が初期状態の場合にAPI通信を行わないように制御
@@ -71,7 +71,7 @@ class ChatGptViewModel(private val chatGptRepository: ChatGptRepository) : ViewM
             initializer {
                 val application = (this[APPLICATION_KEY] as OnePickApplication)
                 val chatGptRepository = application.container.chatGptRepository
-                ChatGptViewModel(chatGptRepository = chatGptRepository)
+                OnePickViewModel(chatGptRepository = chatGptRepository)
             }
         }
     }

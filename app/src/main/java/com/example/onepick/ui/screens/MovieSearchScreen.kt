@@ -38,7 +38,7 @@ fun MovieSearchScreen(
 
 @Composable
 fun InitialScreen(
-    chatGptViewModel: ChatGptViewModel = viewModel(),
+    onePickViewModel: OnePickViewModel = viewModel(),
     modifier: Modifier = Modifier) {
 
     var keyword1 by remember { mutableStateOf("") }
@@ -65,7 +65,7 @@ fun InitialScreen(
         )
         Button(
             onClick = {
-            chatGptViewModel.getRecommendedMovie(keyword1, keyword2, keyword3)
+            onePickViewModel.getRecommendedMovie(keyword1, keyword2, keyword3)
             }
         ) {
             Text("Search")
