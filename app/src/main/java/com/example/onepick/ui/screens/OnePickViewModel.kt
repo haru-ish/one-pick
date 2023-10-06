@@ -16,9 +16,13 @@ import retrofit2.HttpException
 import java.io.IOException
 import com.example.onepick.data.ChatGptRequest
 import com.example.onepick.data.Message
+import com.example.onepick.data.TmdbRepository
 import com.example.onepick.ui.OnePickUiState
 
-class OnePickViewModel(private val chatGptRepository: ChatGptRepository) : ViewModel() {
+class OnePickViewModel(
+    private val chatGptRepository: ChatGptRepository,
+    private val tmdbRepository: TmdbRepository
+    ) : ViewModel() {
 
     /** 最新のリクエストのステータスを保存するミュータブルなステート */
     // UiStateを初期状態で初期化し、画面が初期状態の場合にAPI通信を行わないように制御
@@ -61,8 +65,9 @@ class OnePickViewModel(private val chatGptRepository: ChatGptRepository) : ViewM
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as OnePickApplication)
-                val chatGptRepository = application.container.chatGptRepository
-                OnePickViewModel(chatGptRepository = chatGptRepository)
+                val chatGptRepository = application.chatGptcontainer.chatGptRepository
+                val tmdbRepository = application.tmdbContainer.tmdbRepository
+                OnePickViewModel(chatGptRepository = chatGptRepository, tmdbRepository = tmdbRepository)
             }
         }
     }
