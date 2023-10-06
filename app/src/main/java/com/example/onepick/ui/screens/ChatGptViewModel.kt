@@ -1,8 +1,6 @@
 package com.example.onepick.ui.screens
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -16,7 +14,6 @@ import retrofit2.HttpException
 import java.io.IOException
 import com.example.onepick.data.ChatGptRequest
 import com.example.onepick.data.Message
-import com.example.onepick.network.SharedViewModel
 import com.example.onepick.ui.OnePickUiState
 
 /**
@@ -32,6 +29,15 @@ import com.example.onepick.ui.OnePickUiState
 class ChatGptViewModel(private val chatGptRepository: ChatGptRepository) : ViewModel() {
 
     private val sharedViewModel: SharedViewModel = OnePickApplication.getSharedViewModel()
+
+    init {
+        if (chatGptRepository !is ChatGptRepository.NetworkChatGPTRepository) {
+            throw IllegalArgumentException("chatGptRepository is not an instance of NetworkChatGPTRepository")
+        }
+        Log.d("ChatGptViewModel", "chatGptRepository type: ${chatGptRepository::class.java}")
+        Log.d("ChatGptViewModel", "chatGptRepository value: $chatGptRepository")
+        Log.d("ChatGptViewModel", "chatGptRepository is not null: ${chatGptRepository != null}")
+    }
 
 //    /** 最新のリクエストのステータスを保存するミュータブルなステート */
 //    // MarsUiStateを初期状態で初期化し、画面が初期状態の場合にAPI通信を行わないように制御
@@ -57,19 +63,26 @@ class ChatGptViewModel(private val chatGptRepository: ChatGptRepository) : ViewM
                         Message(role = "user", content = prompt)
                     )
                 )
+
+
+                Log.d("ChatGptViewModel", "Request: $request")
                 val response = chatGptRepository.getRecommendedMovie(request)
+
                 sharedViewModel.updateUIState(OnePickUiState.Success(response.choices[0].message.content))
 
 //                OnePickUiState.Success(
 //                    response.choices[0].message.content
 //                )
             } catch (e: IOException) {
+                Log.e("ChatGptViewModel", "IOException: ${e.message}", e)
                 sharedViewModel.updateUIState(OnePickUiState.Error(e.toString()))
                 // OnePickUiState.Error(e.toString())
             } catch (e: HttpException) {
+                Log.e("ChatGptViewModel", "HttpException: ${e.message}", e)
                 sharedViewModel.updateUIState(OnePickUiState.Error(e.toString()))
                 // OnePickUiState.Error(e.toString())
             }
+
         }
     }
 

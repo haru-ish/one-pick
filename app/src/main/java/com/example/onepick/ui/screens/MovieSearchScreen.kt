@@ -20,19 +20,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.onepick.network.SharedViewModel
 import com.example.onepick.ui.OnePickUiState
 import com.example.onepick.ui.theme.OnePickTheme
 
 @Composable
 fun MovieSearchScreen(
+    chatGptViewModel: ChatGptViewModel,
     sharedViewModel: SharedViewModel,
     modifier: Modifier = Modifier
 ){
     val uiState by sharedViewModel.uiState.collectAsState()
 
     when (uiState) {
-        is OnePickUiState.Initial -> InitialScreen(modifier = modifier.fillMaxSize())
+        is OnePickUiState.Initial -> InitialScreen( chatGptViewModel, modifier = modifier.fillMaxSize())
         is OnePickUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is OnePickUiState.Success -> ResultScreen(
             (uiState as OnePickUiState.Success).content, modifier = modifier.fillMaxWidth()
@@ -44,7 +44,7 @@ fun MovieSearchScreen(
 
 @Composable
 fun InitialScreen(
-    chatGptViewModel: ChatGptViewModel = viewModel(),
+    chatGptViewModel: ChatGptViewModel,
     modifier: Modifier = Modifier) {
 
     var keyword1 by remember { mutableStateOf("") }
@@ -129,6 +129,6 @@ fun ResultScreen(content: String, modifier: Modifier = Modifier) {
 @Composable
 fun OnePickAppPreview() {
     OnePickTheme {
-        InitialScreen()
+        // InitialScreen()
     }
 }

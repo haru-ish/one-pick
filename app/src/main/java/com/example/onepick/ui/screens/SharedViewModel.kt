@@ -1,4 +1,4 @@
-package com.example.onepick.network
+package com.example.onepick.ui.screens
 
 import androidx.lifecycle.ViewModel
 import com.example.onepick.ui.OnePickUiState

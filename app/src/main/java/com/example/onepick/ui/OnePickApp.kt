@@ -8,12 +8,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.onepick.ui.screens.SharedViewModel
 import com.example.onepick.ui.screens.ChatGptViewModel
 import com.example.onepick.ui.screens.MovieSearchScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnePickApp() {
+
+    val sharedViewModel: SharedViewModel = viewModel()
+
     Scaffold(
     ) {
         Surface(
@@ -22,7 +26,10 @@ fun OnePickApp() {
                 .padding(it)
         ) {
             val chatGptViewModel: ChatGptViewModel = viewModel(factory = ChatGptViewModel.Factory)
-            MovieSearchScreen(onePickUiState = chatGptViewModel.onePickUiState)
+            MovieSearchScreen(
+                chatGptViewModel = chatGptViewModel,
+                sharedViewModel = sharedViewModel
+            )
         }
     }
 }

@@ -7,7 +7,7 @@ import retrofit2.http.Headers
 
 interface TmdbApiService {
     @Headers(
-        "accept", "application/json",
+        "accept: application/json",
         "Authorization: Bearer ${BuildConfig.TMDB_API_KEY}"
     )
     @GET("search/movie?query=Batman?language=ja")

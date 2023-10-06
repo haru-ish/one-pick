@@ -1,5 +1,6 @@
 package com.example.onepick.data
 
+import android.util.Log
 import com.example.onepick.network.ChatGptApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
@@ -7,6 +8,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 
 interface ChatGptContainer {
+
     val chatGptRepository: ChatGptRepository
 }
 
@@ -24,11 +26,13 @@ class DefaultChatGptContainer : ChatGptContainer {
 
     // クラス外からアクセスする必要がないためprivateに設定
     private val retrofitService: ChatGptApiService by lazy {
+        Log.d("DefaultChatGptContainer", "retrofitService is initialized")
         // retrofitServiceを初期化
         retrofit.create(ChatGptApiService::class.java)
     }
 
     override val chatGptRepository: ChatGptRepository by lazy {
+        Log.d("DefaultChatGptContainer", "retrofitService is initialized")
         ChatGptRepository.NetworkChatGPTRepository(retrofitService)
     }
 

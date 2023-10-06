@@ -3,7 +3,7 @@ package com.example.onepick
 import android.app.Application
 import com.example.onepick.data.ChatGptContainer
 import com.example.onepick.data.DefaultChatGptContainer
-import com.example.onepick.network.SharedViewModel
+import com.example.onepick.ui.screens.SharedViewModel
 
 class OnePickApplication : Application() {
 
@@ -35,9 +35,4 @@ class OnePickApplication : Application() {
         chatGptContainer = DefaultChatGptContainer()
         sharedViewModel = SharedViewModel()
     }
-
-//    override fun onCreate() {
-//        super.onCreate()
-//        instance = this
-//    }
 }
