@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.onepick.ChatGptApplication
+import com.example.onepick.OnePickApplication
 import com.example.onepick.data.ChatGptRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -69,7 +69,7 @@ class ChatGptViewModel(private val chatGptRepository: ChatGptRepository) : ViewM
         // Factoryオブジェクトはアプリケーションコンテナを使用して、chatGptRepositoryを取得
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                val application = (this[APPLICATION_KEY] as ChatGptApplication)
+                val application = (this[APPLICATION_KEY] as OnePickApplication)
                 val chatGptRepository = application.container.chatGptRepository
                 ChatGptViewModel(chatGptRepository = chatGptRepository)
             }
