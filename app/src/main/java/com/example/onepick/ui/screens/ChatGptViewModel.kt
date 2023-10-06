@@ -38,6 +38,7 @@ class ChatGptViewModel(private val chatGptRepository: ChatGptRepository) : ViewM
      * ChatGptApi Retrofitサービスから映画名を取得
      */
     fun getRecommendedMovie(keyword1: String, keyword2: String, keyword3: String) {
+
         // coroutineを使用してAPI通信をトリガーし、適切な状態に変更する
         viewModelScope.launch {
             onePickUiState = OnePickUiState.Loading
