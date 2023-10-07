@@ -19,6 +19,7 @@ import java.io.IOException
 import com.example.onepick.data.ChatGptRequest
 import com.example.onepick.data.Message
 import com.example.onepick.data.TmdbRepository
+import com.example.onepick.model.Movie
 import com.example.onepick.ui.OnePickUiState
 
 class OnePickViewModel(
@@ -51,12 +52,13 @@ class OnePickViewModel(
                 val response = chatGptRepository.getRecommendedMovie(request)
                 Log.d("ViewModel", "here！！！")
 
-                val movieDetails = getMovieDetails(response.choices[0].message.content)
+                getMovieDetails(response.choices[0].message.content)
 
-                OnePickUiState.Success("yappi!")
             } catch (e: IOException) {
+                Log.e("ViewModel", "error !")
                 OnePickUiState.Error(e.toString())
             } catch (e: HttpException) {
+                Log.e("ViewModel", "error !!!!")
                 OnePickUiState.Error(e.toString())
             }
         }
@@ -68,13 +70,11 @@ class OnePickViewModel(
         Log.d("ViewModel", title)
         return try{
             val response = tmdbRepository.getMovieDetails(title, BuildConfig.TMDB_API_KEY,"ja")
-            val overview = response.results
-            if (overview != null) {
-                Log.d("ViewModel", overview.toString())
-            } else {
-                Log.d("ViewModel", "Overview is null")
+            Log.d("ViewModel", response.toString())
+            if (response.totalResults == 0) {
+                return OnePickUiState.Error("マッチした映画が見つかりませんでした。別のキーワードで探してみてください〜！")
             }
-            OnePickUiState.Success("yappi")
+            OnePickUiState.Success(response.results[0])
         } catch (e: IOException) {
             Log.e("ViewModel", "IOException: ${e.message}")
             OnePickUiState.Error(e.toString())
@@ -82,7 +82,6 @@ class OnePickViewModel(
             Log.e("ViewModel", "HttpException: ${e.message}")
             OnePickUiState.Error(e.toString())
         }
-       //  return OnePickUiState.Success("yappi")
     }
 
     // アプリケーションコンテナによってRepositoryをViewModelに提供することで、ViewModelがRepositoryを作成するのを回避

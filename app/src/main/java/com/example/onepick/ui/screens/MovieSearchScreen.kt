@@ -17,8 +17,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.onepick.model.Movie
 import com.example.onepick.ui.OnePickUiState
 import com.example.onepick.ui.theme.OnePickTheme
 
@@ -111,12 +115,26 @@ fun ErrorScreen(msg: String, modifier: Modifier = Modifier) {
  * ResultScreen displaying number of photos retrieved.
  */
 @Composable
-fun ResultScreen(content: String, modifier: Modifier = Modifier) {
+fun ResultScreen(content: Movie, modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
     ) {
-        Text(text = content)
+        Column {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data("https://image.tmdb.org/t/p/w500/${content.posterPath}")
+                    .crossfade(true)
+                    .build(),
+                // placeholder = painterResource(R.drawable.placeholder),
+                contentDescription = null,
+                //contentScale = ContentScale.Crop,
+                //modifier = Modifier.clip(CircleShape)
+            )
+            Text(text = content.title!!)
+            Text(text = content.releaseDate!!)
+            Text(text = content.overview!!)
+        }
     }
 }
 
