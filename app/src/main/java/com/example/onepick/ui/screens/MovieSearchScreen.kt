@@ -34,7 +34,7 @@ fun MovieSearchScreen(
         )
 
         is OnePickUiState.Error -> ErrorScreen( onePickUiState.msg ,modifier = modifier.fillMaxSize())
-        else -> {}
+        else -> { }
     }
 }
 

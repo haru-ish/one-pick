@@ -1,5 +1,6 @@
 package com.example.onepick.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.onepick.BuildConfig
 import com.example.onepick.OnePickApplication
 import com.example.onepick.data.ChatGptRepository
 import kotlinx.coroutines.launch
@@ -47,16 +49,40 @@ class OnePickViewModel(
                     )
                 )
                 val response = chatGptRepository.getRecommendedMovie(request)
+                Log.d("ViewModel", "here！！！")
 
-                OnePickUiState.Success(
-                    response.choices[0].message.content
-                )
+                val movieDetails = getMovieDetails(response.choices[0].message.content)
+
+                OnePickUiState.Success("yappi!")
             } catch (e: IOException) {
                 OnePickUiState.Error(e.toString())
             } catch (e: HttpException) {
                 OnePickUiState.Error(e.toString())
             }
         }
+    }
+
+    private suspend fun getMovieDetails(title: String) : OnePickUiState {
+        Log.d("ViewModel", "here")
+        // val request = title
+        Log.d("ViewModel", title)
+        return try{
+            val response = tmdbRepository.getMovieDetails(title, BuildConfig.TMDB_API_KEY,"ja")
+            val overview = response.results
+            if (overview != null) {
+                Log.d("ViewModel", overview.toString())
+            } else {
+                Log.d("ViewModel", "Overview is null")
+            }
+            OnePickUiState.Success("yappi")
+        } catch (e: IOException) {
+            Log.e("ViewModel", "IOException: ${e.message}")
+            OnePickUiState.Error(e.toString())
+        } catch (e: HttpException) {
+            Log.e("ViewModel", "HttpException: ${e.message}")
+            OnePickUiState.Error(e.toString())
+        }
+       //  return OnePickUiState.Success("yappi")
     }
 
     // アプリケーションコンテナによってRepositoryをViewModelに提供することで、ViewModelがRepositoryを作成するのを回避
