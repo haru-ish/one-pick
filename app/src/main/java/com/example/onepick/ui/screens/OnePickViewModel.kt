@@ -12,6 +12,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.onepick.BuildConfig
 import com.example.onepick.OnePickApplication
+import com.example.onepick.R
 import com.example.onepick.data.ChatGptRepository
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -40,8 +41,8 @@ class OnePickViewModel(
         viewModelScope.launch {
             onePickUiState = OnePickUiState.Loading
             onePickUiState = try {
-                val prompt = "「${keyword1}」「${keyword2}」「${keyword3}」の3つに当てはまる映画を一つおすすめしてほしいです。" +
-                        "映画名だけ返してくれますか？"
+                val prompt = "「${keyword1}」「${keyword2}」「${keyword3}」の3つのワードに当てはまる映画を一つだけ教えて下さい。" +
+                        "回答は以下の形で返して下さい。それ以外の情報は何も返さないで下さい。「」"
                 val request = ChatGptRequest(
                     model = "gpt-3.5-turbo",
                     messages = listOf(
@@ -50,38 +51,36 @@ class OnePickViewModel(
                     )
                 )
                 val response = chatGptRepository.getRecommendedMovie(request)
-                Log.d("ViewModel", "here！！！")
 
                 getMovieDetails(response.choices[0].message.content)
 
             } catch (e: IOException) {
-                Log.e("ViewModel", "error !")
-                OnePickUiState.Error(e.toString())
+                OnePickUiState.Error("サーバーに接続できません。ネットワーク接続を確認してください。")
             } catch (e: HttpException) {
-                Log.e("ViewModel", "error !!!!")
-                OnePickUiState.Error(e.toString())
+                OnePickUiState.Error("サーバーエラーが発生しました。時間を置いて再試行してください。")
             }
         }
     }
 
     private suspend fun getMovieDetails(title: String) : OnePickUiState {
-        Log.d("ViewModel", "here")
-        // val request = title
         Log.d("ViewModel", title)
         return try{
             val response = tmdbRepository.getMovieDetails(title, BuildConfig.TMDB_API_KEY,"ja")
             Log.d("ViewModel", response.toString())
             if (response.totalResults == 0) {
-                return OnePickUiState.Error("マッチした映画が見つかりませんでした。別のキーワードで探してみてください〜！")
+                OnePickUiState.Error("おすすめの映画が見つかりませんでした。別のキーワードで探してみてください。")
+            } else {
+                OnePickUiState.Success(response.results[0])
             }
-            OnePickUiState.Success(response.results[0])
         } catch (e: IOException) {
-            Log.e("ViewModel", "IOException: ${e.message}")
-            OnePickUiState.Error(e.toString())
+            OnePickUiState.Error("サーバーに接続できません。ネットワーク接続を確認してください。")
         } catch (e: HttpException) {
-            Log.e("ViewModel", "HttpException: ${e.message}")
-            OnePickUiState.Error(e.toString())
+            OnePickUiState.Error("サーバーエラーが発生しました。時間を置いて再試行してください。")
         }
+    }
+
+    fun resetAppState() {
+        onePickUiState = OnePickUiState.Initial
     }
 
     // アプリケーションコンテナによってRepositoryをViewModelに提供することで、ViewModelがRepositoryを作成するのを回避
@@ -90,7 +89,7 @@ class OnePickViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as OnePickApplication)
-                val chatGptRepository = application.chatGptcontainer.chatGptRepository
+                val chatGptRepository = application.chatGptContainer.chatGptRepository
                 val tmdbRepository = application.tmdbContainer.tmdbRepository
                 OnePickViewModel(chatGptRepository = chatGptRepository, tmdbRepository = tmdbRepository)
             }

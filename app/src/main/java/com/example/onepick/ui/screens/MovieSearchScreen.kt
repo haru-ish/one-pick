@@ -28,23 +28,25 @@ import com.example.onepick.ui.theme.OnePickTheme
 
 @Composable
 fun MovieSearchScreen(
-    onePickUiState: OnePickUiState, modifier: Modifier = Modifier
+    onePickUiState: OnePickUiState,
+    onePickViewModel: OnePickViewModel,
+    modifier: Modifier = Modifier
 ){
     when (onePickUiState) {
-        is OnePickUiState.Initial -> InitialScreen(modifier = modifier.fillMaxSize())
+        is OnePickUiState.Initial -> InitialScreen(onePickViewModel, modifier = modifier.fillMaxSize())
         is OnePickUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is OnePickUiState.Success -> ResultScreen(
-            onePickUiState.content, modifier = modifier.fillMaxWidth()
+            onePickUiState.content, onePickViewModel, modifier = modifier.fillMaxWidth()
         )
 
-        is OnePickUiState.Error -> ErrorScreen( onePickUiState.msg ,modifier = modifier.fillMaxSize())
+        is OnePickUiState.Error -> ErrorScreen( onePickUiState.msg, onePickViewModel, modifier = modifier.fillMaxSize())
         else -> { }
     }
 }
 
 @Composable
 fun InitialScreen(
-    onePickViewModel: OnePickViewModel = viewModel(),
+    onePickViewModel: OnePickViewModel,
     modifier: Modifier = Modifier) {
 
     var keyword1 by remember { mutableStateOf("") }
@@ -97,7 +99,10 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
  * The home screen displaying error message with re-attempt button.
  */
 @Composable
-fun ErrorScreen(msg: String, modifier: Modifier = Modifier) {
+fun ErrorScreen(msg: String,
+                onePickViewModel: OnePickViewModel,
+                modifier: Modifier = Modifier
+) {
 //    Column(
 //        modifier = modifier,
 //        verticalArrangement = Arrangement.Center,
@@ -109,13 +114,24 @@ fun ErrorScreen(msg: String, modifier: Modifier = Modifier) {
 //        Text(text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp))
 //    }
     Text(text = "Error: $msg")
+    Button(
+        onClick = {
+            onePickViewModel.resetAppState()
+        }
+    ) {
+        Text("検索に戻る")
+    }
 }
 
 /**
  * ResultScreen displaying number of photos retrieved.
  */
 @Composable
-fun ResultScreen(content: Movie, modifier: Modifier = Modifier) {
+fun ResultScreen(
+    content: Movie,
+    onePickViewModel: OnePickViewModel,
+    modifier: Modifier = Modifier
+) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -131,9 +147,17 @@ fun ResultScreen(content: Movie, modifier: Modifier = Modifier) {
                 //contentScale = ContentScale.Crop,
                 //modifier = Modifier.clip(CircleShape)
             )
-            Text(text = content.title!!)
-            Text(text = content.releaseDate!!)
-            Text(text = content.overview!!)
+            Text(text = "「${content.title!!}」")
+            Text(text = "${content.releaseDate!!} 公開")
+            Text(text = "あらすじ: n${content.overview!!}")
+
+            Button(
+                onClick = {
+                    onePickViewModel.resetAppState()
+                }
+            ) {
+                Text("検索に戻る")
+            }
         }
     }
 }
@@ -143,6 +167,6 @@ fun ResultScreen(content: Movie, modifier: Modifier = Modifier) {
 @Composable
 fun OnePickAppPreview() {
     OnePickTheme {
-        InitialScreen()
+        // InitialScreen()
     }
 }
