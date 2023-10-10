@@ -13,7 +13,7 @@ interface TmdbContainer {
 }
 
 class DefaultTmdbContainer : TmdbContainer {
-    private val apiKey = BuildConfig.TMDB_API_KEY
+
     private val baseUrl = "https://api.themoviedb.org/3/"
 
     /**
@@ -25,7 +25,7 @@ class DefaultTmdbContainer : TmdbContainer {
      * kotlinx.serializationコンバーターを使用したRetrofitビルダーを使用して、Retrofitオブジェクトを構築
      */
     private val retrofit = Retrofit.Builder()
-        .client(okHttpClient)
+        //.client(okHttpClient)
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(baseUrl)
         .build()
