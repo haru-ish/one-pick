@@ -2,14 +2,27 @@
 
 package com.example.onepick.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.MaterialTheme.typography
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,10 +31,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.onepick.data.ChatGptRepository
+import com.example.onepick.data.TmdbRepository
 import com.example.onepick.model.Movie
 import com.example.onepick.ui.OnePickUiState
 import com.example.onepick.ui.theme.OnePickTheme
@@ -54,29 +73,66 @@ fun InitialScreen(
     var keyword3 by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier
+        modifier = Modifier.padding(32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        TextField(value = keyword1,
+        Text(
+            text ="今の気分にぴったりな映画をおすすめします。\n" +
+                    "キーワードを最大3つまで入力してください。",
+            style = typography.titleSmall
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        OutlinedTextField(
+            value = keyword1,
+            singleLine = true,
+            shape = shapes.large,
             onValueChange = { keyword1 = it},
-            label = { Text(" 一つ目のキーワード")},
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("キーワード1")},
+            leadingIcon = { Icon( Icons.Filled.Search, contentDescription = null ) },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            // colors = TextFieldDefaults.textFieldColors(containerColor = colorScheme.surface),
+            modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth()
         )
-        TextField(value = keyword2,
+        // Spacer(modifier = Modifier.height(150.dp))
+        OutlinedTextField(value = keyword2,
+            singleLine = true,
+            shape = shapes.large,
             onValueChange = { keyword2 = it},
-            label = { Text("二つ目のキーワード")},
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("キーワード2")},
+            leadingIcon = { Icon( Icons.Filled.Search, contentDescription = null ) },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth()
         )
-        TextField(value = keyword3,
+        // Spacer(modifier = Modifier.height(150.dp))
+        OutlinedTextField(value = keyword3,
+            singleLine = true,
+            shape = shapes.large,
             onValueChange = { keyword3 = it},
-            label = { Text(" 三つ目のキーワード")},
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("キーワード3")},
+            leadingIcon = { Icon( Icons.Filled.Search, contentDescription = null ) },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Done
+            ),
+            modifier = Modifier.padding(bottom = 32.dp).fillMaxWidth()
         )
         Button(
+            modifier = Modifier.fillMaxWidth(),
             onClick = {
-            onePickViewModel.getRecommendedMovie(keyword1, keyword2, keyword3)
+                onePickViewModel.getRecommendedMovie(keyword1, keyword2, keyword3)
             }
         ) {
-            Text("Search")
+            Text(
+                "Search",
+                fontSize = 16.sp
+            )
         }
 
     }
@@ -166,7 +222,8 @@ fun ResultScreen(
 @Preview(showBackground = true)
 @Composable
 fun OnePickAppPreview() {
+    // val onePickViewModel: OnePickViewModel = viewModel(factory = OnePickViewModel.Factory)
     OnePickTheme {
-        // InitialScreen()
+       // InitialScreen( onePickViewModel = onePickViewModel )
     }
 }
