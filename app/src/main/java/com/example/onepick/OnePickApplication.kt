@@ -7,11 +7,11 @@ import com.example.onepick.data.DefaultTmdbContainer
 import com.example.onepick.data.TmdbContainer
 
 class OnePickApplication : Application() {
-    lateinit var chatGptcontainer: ChatGptContainer
+    lateinit var chatGptContainer: ChatGptContainer
     lateinit var tmdbContainer: TmdbContainer
     override fun onCreate() {
         super.onCreate()
-        chatGptcontainer = DefaultChatGptContainer()
+        chatGptContainer = DefaultChatGptContainer()
         tmdbContainer = DefaultTmdbContainer()
     }
 }
