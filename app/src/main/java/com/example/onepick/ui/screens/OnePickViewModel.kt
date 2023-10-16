@@ -36,9 +36,6 @@ class OnePickViewModel(
      * ChatGptApi Retrofitサービスから映画名を取得
      */
     fun getRecommendedMovie(keyword1: String, keyword2: String, keyword3: String) {
-        // ユーザーの入力値をチェックするファンクションを呼び出し
-        //val inputCheck= checkInputValue(keyword1, keyword2, keyword3)
-
         // coroutineを使用してAPI通信をトリガーし、適切な状態に変更する
         viewModelScope.launch {
             // UIStateをInitialからLoadingに変更
@@ -58,7 +55,6 @@ class OnePickViewModel(
                 val response = chatGptRepository.getRecommendedMovie(request)
                 // ChatGptApiから回答が返ってきたら、以下のファンクションを呼び出す
                 getMovieDetails(response.choices[0].message.content)
-
             } catch (e: IOException) {
                 OnePickUiState.Error("サーバーに接続できません。ネットワーク接続を確認してください。")
             } catch (e: HttpException) {

@@ -2,6 +2,7 @@
 
 package com.example.onepick.ui.screens
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.onepick.R
 import com.example.onepick.data.ChatGptRepository
 import com.example.onepick.data.TmdbRepository
 import com.example.onepick.model.Movie
@@ -53,17 +56,15 @@ fun MovieSearchScreen(
     modifier: Modifier = Modifier
 ){
     // ViewModelからデータを受け取る
-    val uiState = onePickViewModel.onePickUiState
-    // val uiState by remember { mutableStateOf(onePickViewModel.onePickUiState) }
+    val uiState by remember { mutableStateOf(onePickViewModel.onePickUiState) }
 
     when (uiState) {
         is OnePickUiState.Initial -> InitialScreen(onePickViewModel, modifier = modifier.fillMaxSize())
         is OnePickUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is OnePickUiState.Success -> ResultScreen(
-            uiState.content, onePickViewModel, modifier = modifier.fillMaxWidth()
+            (uiState as OnePickUiState.Success).content, onePickViewModel, modifier = modifier.fillMaxWidth()
         )
-
-        is OnePickUiState.Error -> ErrorScreen( uiState.msg, onePickViewModel, modifier = modifier.fillMaxSize())
+        is OnePickUiState.Error -> ErrorScreen( (uiState as OnePickUiState.Error).msg, onePickViewModel, modifier = modifier.fillMaxSize())
         else -> { }
     }
 }
@@ -71,15 +72,13 @@ fun MovieSearchScreen(
 @Composable
 fun InitialScreen(
     onePickViewModel: OnePickViewModel,
-    //isNoInput: Boolean,
-    modifier: Modifier = Modifier) {
-
+    modifier: Modifier = Modifier
+) {
     var keyword1 by remember { mutableStateOf("") }
     var keyword2 by remember { mutableStateOf("") }
     var keyword3 by remember { mutableStateOf("") }
 
     var isNoInput by remember { mutableStateOf(false) }
-    val maxChar = 10
 
     Column(
         modifier = Modifier.padding(32.dp),
@@ -92,69 +91,31 @@ fun InitialScreen(
             style = typography.titleSmall
         )
         Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
+        OutlinedTextFieldWithCounter(
             value = keyword1,
-            singleLine = true,
-            shape = shapes.large,
-            onValueChange = { if (it.length <= maxChar) keyword1 = it },
-            label = {
-                if (isNoInput) {
-                    Text("キーワードを入力してください")
-                } else {
-                    Text("例: 孤独")
-                }
-            },
-            isError = isNoInput,
-            leadingIcon = { Icon( Icons.Filled.Search, contentDescription = null ) },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            supportingText = {
-                Text(
-                    text = "${keyword1.length} / $maxChar",
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.End,
-                )
-            },
-            modifier = Modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
+            onValueChange = { keyword1 = it },
+            labelResId = if (isNoInput) R.string.label_error else R.string.label_1,
+            imeAction = ImeAction.Next,
+            isError = isNoInput
         )
-        // Spacer(modifier = Modifier.height(150.dp))
-        OutlinedTextField(value = keyword2,
-            singleLine = true,
-            shape = shapes.large,
-            onValueChange = { keyword2 = it},
-            label = { Text("例: 不器用")},
-            leadingIcon = { Icon( Icons.Filled.Search, contentDescription = null ) },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next
-            ),
-            modifier = Modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
+        OutlinedTextFieldWithCounter(
+            value = keyword2,
+            onValueChange = { keyword2 = it },
+            labelResId = R.string.label_2,
+            imeAction = ImeAction.Next,
+            isError = false
         )
-        // Spacer(modifier = Modifier.height(150.dp))
-        OutlinedTextField(value = keyword3,
-            singleLine = true,
-            shape = shapes.large,
-            onValueChange = { keyword3 = it},
-            label = { Text("例: ヒューマンドラマ")},
-            leadingIcon = { Icon( Icons.Filled.Search, contentDescription = null ) },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
-            ),
-            modifier = Modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
+        OutlinedTextFieldWithCounter(
+            value = keyword3,
+            onValueChange = { keyword3 = it },
+            labelResId = R.string.label_3,
+            imeAction = ImeAction.Done,
+            isError = false
         )
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                if(keyword1.isNullOrEmpty() && keyword2.isNullOrEmpty() && keyword3.isNullOrEmpty()) {
+                if(keyword1.isBlank() && keyword2.isBlank() && keyword3.isBlank()) {
                     isNoInput = true
                 } else {
                     onePickViewModel.getRecommendedMovie(keyword1, keyword2, keyword3)
@@ -169,6 +130,41 @@ fun InitialScreen(
         }
 
     }
+}
+
+@Composable
+fun OutlinedTextFieldWithCounter(
+    value: String,
+    onValueChange: (String) -> Unit,
+    @StringRes labelResId: Int,
+    imeAction: ImeAction,
+    isError: Boolean
+) {
+    val maxChar = 10
+
+    OutlinedTextField(
+        value = value,
+        singleLine = true,
+        shape = shapes.large,
+        onValueChange = { if (it.length <= maxChar) { onValueChange(it) } },
+        label = { Text(stringResource(labelResId)) },
+        isError = isError,
+        leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Text,
+            imeAction = imeAction
+        ),
+        supportingText = {
+            Text(
+                text = "${value.length} / $maxChar",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.End,
+            )
+        },
+        modifier = Modifier
+            .padding(bottom = 16.dp)
+            .fillMaxWidth()
+    )
 }
 
 /**
