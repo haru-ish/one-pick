@@ -23,7 +23,7 @@ fun OnePickApp() {
                 .padding(it)
         ) {
             val onePickViewModel: OnePickViewModel = viewModel(factory = OnePickViewModel.Factory)
-            MovieSearchScreen(onePickUiState = onePickViewModel.onePickUiState, onePickViewModel = onePickViewModel)
+            MovieSearchScreen(onePickViewModel = onePickViewModel)
         }
     }
 }

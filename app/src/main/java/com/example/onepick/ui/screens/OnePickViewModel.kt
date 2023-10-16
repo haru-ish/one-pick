@@ -1,6 +1,7 @@
 package com.example.onepick.ui.screens
 
 import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -31,19 +32,20 @@ class OnePickViewModel(
     var onePickUiState: OnePickUiState by mutableStateOf(OnePickUiState.Initial)
         private set
 
-    private var coroutineJob: Job? = null
-
     /**
      * ChatGptApi Retrofitサービスから映画名を取得
      */
     fun getRecommendedMovie(keyword1: String, keyword2: String, keyword3: String) {
+        // ユーザーの入力値をチェックするファンクションを呼び出し
+        //val inputCheck= checkInputValue(keyword1, keyword2, keyword3)
+
         // coroutineを使用してAPI通信をトリガーし、適切な状態に変更する
-        coroutineJob =viewModelScope.launch {
+        viewModelScope.launch {
             // UIStateをInitialからLoadingに変更
             onePickUiState = OnePickUiState.Loading
             // API通信が成功すればSuccessを、失敗すればErrorを返す
             onePickUiState = try {
-                val prompt = "「${keyword1}」「${keyword2}」「${keyword3}」の3つのワードに当てはまる映画を一つだけ教えて下さい。" +
+                val prompt = "「${keyword1}」「${keyword2}」「${keyword3}」の3つのワードに当てはまる映画を一つだけ教えて下さい。ランダムにお願いします。" +
                         "回答は以下の形で返して下さい。それ以外の情報は何も返さないで下さい。「」"
                 val request = ChatGptRequest(
                     model = "gpt-3.5-turbo",
@@ -93,6 +95,11 @@ class OnePickViewModel(
      */
     fun resetAppState() {
         onePickUiState = OnePickUiState.Initial
+    }
+
+    private fun checkInputValue(keyword1: String, keyword2: String, keyword3: String) : Boolean {
+
+        return (keyword1.isNullOrEmpty() && keyword2.isNullOrEmpty() && keyword3.isNullOrEmpty())
     }
 
     // アプリケーションコンテナによってRepositoryをViewModelに提供することで、ViewModelがRepositoryを作成するのを回避

@@ -11,3 +11,6 @@ sealed interface OnePickUiState {
     object Loading : OnePickUiState
     object Initial : OnePickUiState
 }
+
+// 入力チェックの結果を返すフラグ
+//data class InputCheck(val isNoInput: Boolean = false)
