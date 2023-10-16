@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">One Pick</string>
+    <string name="label_1">例: 孤独</string>
+    <string name="label_2">例: 不器用</string>
+    <string name="label_3">例: ヒューマンドラマ</string>
+    <string name="label_error">キーワードを入力してください</string>
 </resources>
