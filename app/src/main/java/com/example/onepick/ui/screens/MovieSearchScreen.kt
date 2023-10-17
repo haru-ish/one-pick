@@ -3,6 +3,7 @@
 package com.example.onepick.ui.screens
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,10 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -33,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -56,15 +60,16 @@ fun MovieSearchScreen(
     modifier: Modifier = Modifier
 ){
     // ViewModelからデータを受け取る
-    val uiState by remember { mutableStateOf(onePickViewModel.onePickUiState) }
+    //val uiState by remember { mutableStateOf(onePickViewModel.onePickUiState) }
+    val uiState = onePickViewModel.onePickUiState
 
     when (uiState) {
         is OnePickUiState.Initial -> InitialScreen(onePickViewModel, modifier = modifier.fillMaxSize())
         is OnePickUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is OnePickUiState.Success -> ResultScreen(
-            (uiState as OnePickUiState.Success).content, onePickViewModel, modifier = modifier.fillMaxWidth()
+            uiState.content, onePickViewModel, modifier = modifier.fillMaxWidth()
         )
-        is OnePickUiState.Error -> ErrorScreen( (uiState as OnePickUiState.Error).msg, onePickViewModel, modifier = modifier.fillMaxSize())
+        is OnePickUiState.Error -> ErrorScreen( uiState.msg, onePickViewModel, modifier = modifier.fillMaxSize())
         else -> { }
     }
 }
@@ -172,12 +177,22 @@ fun OutlinedTextFieldWithCounter(
  */
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
-    Text(text = "Loading...")
-//    Image(
-//        modifier = modifier.size(200.dp),
-//        painter = painterResource(R.drawable.loading_img),
-//        contentDescription = stringResource(R.string.loading)
-//    )
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "あなたにマッチする映画を探しています\uD83D\uDC40",
+                style = typography.titleMedium
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            CircularProgressIndicator()
+        }
+    }
 }
 
 /**
