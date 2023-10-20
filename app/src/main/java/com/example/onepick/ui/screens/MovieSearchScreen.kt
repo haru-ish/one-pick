@@ -4,19 +4,26 @@ package com.example.onepick.ui.screens
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,9 +42,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -51,8 +63,11 @@ import com.example.onepick.R
 import com.example.onepick.data.ChatGptRepository
 import com.example.onepick.data.TmdbRepository
 import com.example.onepick.model.Movie
+import com.example.onepick.model.genres
 import com.example.onepick.ui.OnePickUiState
 import com.example.onepick.ui.theme.OnePickTheme
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @Composable
 fun MovieSearchScreen(
@@ -186,7 +201,7 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "あなたにマッチする映画を探しています\uD83D\uDC40",
+                text = "キーワードにマッチする映画を探しています\uD83D\uDC40",
                 style = typography.titleMedium
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -234,34 +249,106 @@ fun ResultScreen(
 ) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) {
-        Column {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://image.tmdb.org/t/p/w500/${content.posterPath}")
-                    .crossfade(true)
-                    .build(),
-                // placeholder = painterResource(R.drawable.placeholder),
-                contentDescription = null,
-                //contentScale = ContentScale.Crop,
-                //modifier = Modifier.clip(CircleShape)
-            )
-            Text(text = "「${content.title!!}」")
-            Text(text = "${content.releaseDate!!} 公開")
-            Text(text = "あらすじ: n${content.overview!!}")
-
-            Button(
-                onClick = {
-                    onePickViewModel.resetAppState()
+        LazyColumn(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                Text(
+                    text = "${content.title!!}",
+                    fontWeight = FontWeight.Bold,
+                    style = typography.titleLarge
+                )
+                Text(
+                    text = "Original title: ${content.originalTitle!!}",
+                    color = Color.Gray,
+                    style = typography.titleSmall
+                )
+            }
+            item {
+                Row(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("https://image.tmdb.org/t/p/w400/${content.posterPath}")
+                            .crossfade(true)
+                            .build(),
+                        // placeholder = painterResource(R.drawable.placeholder),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                    )
+                    Column(
+                        modifier = Modifier.padding(start = 16.dp)
+                    ) {
+                        Text(
+                            text="公開年",
+                            color = Color.Gray,
+                            modifier = Modifier.padding(bottom = 8.dp),
+                            style = typography.bodyLarge,
+                        )
+                        Text(
+                            text = " ${content.releaseDate!!.substring(0, 4)}年",
+                            style = typography.bodyLarge,
+                            modifier = Modifier
+                                .border(1.dp, Color(0xFFEEEEEE), RectangleShape)
+                                .background(Color(0xFFEEEEEE)).fillMaxWidth()
+                        )
+                        Text("ジャンル",
+                            color = Color.Gray,
+                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                            style = typography.bodyLarge,
+                        )
+                        Text(
+                            text = DisplayGenre(content.genreIds),
+                            style = typography.bodyLarge,
+                            modifier = Modifier
+                                .border(1.dp, Color(0xFFEEEEEE), RectangleShape)
+                                .background(Color(0xFFEEEEEE)).fillMaxWidth()
+                        )
+                        Text("スコア (TMDB)",
+                            color = Color.Gray,
+                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                            style = typography.bodyLarge,
+                        )
+                        Text(
+                            text = " ⭐ ${ BigDecimal(content.voteAverage!!).setScale(1, RoundingMode.HALF_UP).toDouble()} / 10",
+                            style = typography.bodyLarge,
+                            modifier = Modifier
+                                .border(1.dp, Color(0xFFEEEEEE), RectangleShape)
+                                .background(Color(0xFFEEEEEE)).fillMaxWidth()
+                        )
+                    }
                 }
-            ) {
-                Text("検索に戻る")
+            }
+            item{
+                Text(text = "${content.overview!!}")
+                Spacer(modifier = Modifier.height(16.dp))
+                //Text(text = "${content.overview!!}")
+                Button(
+                    onClick = {
+                        onePickViewModel.resetAppState()
+                    }
+                ) {
+                    Text("検索に戻る")
+                }
             }
         }
     }
 }
 
+@Composable
+fun DisplayGenre(ids: List<Int>?) : String {
+    val textList = ids?.mapNotNull { id ->
+        val genre = genres.find { it.id == id }
+        genre?.name
+    }
+
+    // テキストのリストをスペースで結合して文字列にする
+    return textList?.joinToString("／") ?: ""
+}
 
 @Preview(showBackground = true)
 @Composable
