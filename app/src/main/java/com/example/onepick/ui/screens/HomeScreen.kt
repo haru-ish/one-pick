@@ -62,7 +62,7 @@ import java.math.RoundingMode
 
 
 @Composable
-fun MovieSearchScreen(
+fun HomeScreen(
     onePickViewModel: OnePickViewModel,
     modifier: Modifier = Modifier
 ){
