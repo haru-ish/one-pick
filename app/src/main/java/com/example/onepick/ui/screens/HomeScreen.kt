@@ -3,7 +3,6 @@
 package com.example.onepick.ui.screens
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -17,24 +16,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,12 +37,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -56,12 +50,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.onepick.R
-import com.example.onepick.data.ChatGptRepository
-import com.example.onepick.data.TmdbRepository
 import com.example.onepick.model.Movie
 import com.example.onepick.model.genres
 import com.example.onepick.ui.OnePickUiState
@@ -69,26 +60,28 @@ import com.example.onepick.ui.theme.OnePickTheme
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+
 @Composable
 fun MovieSearchScreen(
     onePickViewModel: OnePickViewModel,
     modifier: Modifier = Modifier
 ){
-    // ViewModelからデータを受け取る
-    //val uiState by remember { mutableStateOf(onePickViewModel.onePickUiState) }
+    // ViewModelからUIStateを受け取る
     val uiState = onePickViewModel.onePickUiState
-
+    // UIStateによって、表示する画面を管理
     when (uiState) {
         is OnePickUiState.Initial -> InitialScreen(onePickViewModel, modifier = modifier.fillMaxSize())
         is OnePickUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
         is OnePickUiState.Success -> ResultScreen(
-            uiState.content, onePickViewModel, modifier = modifier.fillMaxWidth()
+            (uiState as OnePickUiState.Success).content, onePickViewModel, modifier = modifier.fillMaxWidth()
         )
-        is OnePickUiState.Error -> ErrorScreen( uiState.msg, onePickViewModel, modifier = modifier.fillMaxSize())
-        else -> { }
+        is OnePickUiState.Error -> ErrorScreen( (uiState as OnePickUiState.Error).msg, onePickViewModel, modifier = modifier.fillMaxSize())
     }
 }
 
+/**
+ * ユーザーがキーワードを入力し、検索ボタンを押下する画面
+ */
 @Composable
 fun InitialScreen(
     onePickViewModel: OnePickViewModel,
@@ -97,20 +90,17 @@ fun InitialScreen(
     var keyword1 by remember { mutableStateOf("") }
     var keyword2 by remember { mutableStateOf("") }
     var keyword3 by remember { mutableStateOf("") }
-
     var isNoInput by remember { mutableStateOf(false) }
-
     Column(
-        modifier = Modifier.padding(32.dp),
+        modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_large)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text ="今の気分にぴったりな映画をおすすめします。\n" +
-                    "キーワードを最大3つまで入力してください。",
+            text = stringResource(R.string.app_description),
             style = typography.titleSmall
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_medium)))
         OutlinedTextFieldWithCounter(
             value = keyword1,
             onValueChange = { keyword1 = it },
@@ -135,16 +125,17 @@ fun InitialScreen(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
+                // 入力チェック(全てのキーワードが空文字だった場合、エラーを返す)
                 if(keyword1.isBlank() && keyword2.isBlank() && keyword3.isBlank()) {
                     isNoInput = true
                 } else {
+                    // chatGptApiと通信
                     onePickViewModel.getRecommendedMovie(keyword1, keyword2, keyword3)
-
                 }
             }
         ) {
             Text(
-                "Search",
+                stringResource(R.string.search),
                 fontSize = 16.sp
             )
         }
@@ -152,6 +143,9 @@ fun InitialScreen(
     }
 }
 
+/**
+ * ユーザーがキーワードを入力する際のフォーマット
+ */
 @Composable
 fun OutlinedTextFieldWithCounter(
     value: String,
@@ -161,11 +155,11 @@ fun OutlinedTextFieldWithCounter(
     isError: Boolean
 ) {
     val maxChar = 10
-
     OutlinedTextField(
         value = value,
         singleLine = true,
         shape = shapes.large,
+        // 10文字以上入力できないように制限
         onValueChange = { if (it.length <= maxChar) { onValueChange(it) } },
         label = { Text(stringResource(labelResId)) },
         isError = isError,
@@ -182,13 +176,13 @@ fun OutlinedTextFieldWithCounter(
             )
         },
         modifier = Modifier
-            .padding(bottom = 16.dp)
+            .padding(bottom = dimensionResource(id = R.dimen.padding_medium))
             .fillMaxWidth()
     )
 }
 
 /**
- * The home screen displaying the loading message.
+ * ローディングメッセージを表示する画面
  */
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
@@ -201,45 +195,53 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "キーワードにマッチする映画を探しています\uD83D\uDC40",
+                text = stringResource(R.string.loading_description),
                 style = typography.titleMedium
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_medium)))
+            // ローディング中のアイコン(ぐるぐる回る)を表示
             CircularProgressIndicator()
         }
     }
 }
 
 /**
- * The home screen displaying error message with re-attempt button.
+ * エラーメッセージと再試行ボタンを表示する画面
  */
 @Composable
-fun ErrorScreen(msg: String,
-                onePickViewModel: OnePickViewModel,
-                modifier: Modifier = Modifier
+fun ErrorScreen(
+    msg: String,
+    onePickViewModel: OnePickViewModel,
+    modifier: Modifier = Modifier
 ) {
-//    Column(
-//        modifier = modifier,
-//        verticalArrangement = Arrangement.Center,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Image(
-//            painter = painterResource(id = R.drawable.ic_connection_error), contentDescription = ""
-//        )
-//        Text(text = stringResource(R.string.loading_failed), modifier = Modifier.padding(16.dp))
-//    }
-    Text(text = "Error: $msg")
-    Button(
-        onClick = {
-            onePickViewModel.resetAppState()
-        }
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("検索に戻る")
+        Icon(
+            imageVector = Icons.Default.Warning,
+            stringResource(R.string.error),
+            tint = Color.Gray,
+            modifier = Modifier.size(96.dp)
+        )
+        Text(text = "$msg",
+            style = typography.titleMedium,
+            modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
+        )
+        Button(
+            onClick = {
+                // UIStateをInitialにリセット
+                onePickViewModel.resetAppState()
+            }
+        ) {
+            Text(stringResource(R.string.retry))
+        }
     }
 }
 
 /**
- * ResultScreen displaying number of photos retrieved.
+ * 検索結果(映画の詳細)を表示する画面
  */
 @Composable
 fun ResultScreen(
@@ -253,9 +255,20 @@ fun ResultScreen(
     ) {
         LazyColumn(
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
         ) {
             item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    CloseButton {
+                        // UIStateをInitialにリセット
+                        onePickViewModel.resetAppState()
+                    }
+                }
+                Spacer(modifier = Modifier.height(dimensionResource(id = R.dimen.padding_small)))
                 Text(
                     text = "${content.title!!}",
                     fontWeight = FontWeight.Bold,
@@ -269,85 +282,113 @@ fun ResultScreen(
             }
             item {
                 Row(
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_medium))
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data("https://image.tmdb.org/t/p/w400/${content.posterPath}")
                             .crossfade(true)
                             .build(),
-                        // placeholder = painterResource(R.drawable.placeholder),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                     )
                     Column(
-                        modifier = Modifier.padding(start = 16.dp)
+                        modifier = Modifier.padding(start = dimensionResource(id = R.dimen.padding_medium))
                     ) {
-                        Text(
-                            text="公開年",
-                            color = Color.Gray,
-                            modifier = Modifier.padding(bottom = 8.dp),
-                            style = typography.bodyLarge,
+                        InfoText(stringResource(R.string.result_label_1),
+                            content.releaseDate!!.substring(0, 4) + "年"
                         )
-                        Text(
-                            text = " ${content.releaseDate!!.substring(0, 4)}年",
-                            style = typography.bodyLarge,
-                            modifier = Modifier
-                                .border(1.dp, Color(0xFFEEEEEE), RectangleShape)
-                                .background(Color(0xFFEEEEEE)).fillMaxWidth()
+                        InfoText(
+                            stringResource(R.string.result_label_2),
+                            DisplayGenre(content.genreIds),
+                            Modifier.padding(top = dimensionResource(id = R.dimen.padding_small))
                         )
-                        Text("ジャンル",
-                            color = Color.Gray,
-                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-                            style = typography.bodyLarge,
-                        )
-                        Text(
-                            text = DisplayGenre(content.genreIds),
-                            style = typography.bodyLarge,
-                            modifier = Modifier
-                                .border(1.dp, Color(0xFFEEEEEE), RectangleShape)
-                                .background(Color(0xFFEEEEEE)).fillMaxWidth()
-                        )
-                        Text("スコア (TMDB)",
-                            color = Color.Gray,
-                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-                            style = typography.bodyLarge,
-                        )
-                        Text(
-                            text = " ⭐ ${ BigDecimal(content.voteAverage!!).setScale(1, RoundingMode.HALF_UP).toDouble()} / 10",
-                            style = typography.bodyLarge,
-                            modifier = Modifier
-                                .border(1.dp, Color(0xFFEEEEEE), RectangleShape)
-                                .background(Color(0xFFEEEEEE)).fillMaxWidth()
+                        InfoText(
+                            stringResource(R.string.result_label_3),
+                            "⭐ ${BigDecimal(content.voteAverage!!).setScale(1,
+                                RoundingMode.HALF_UP).toDouble()} / 10", Modifier.padding(top = dimensionResource(id = R.dimen.padding_small))
                         )
                     }
                 }
             }
             item{
-                Text(text = "${content.overview!!}")
-                Spacer(modifier = Modifier.height(16.dp))
-                //Text(text = "${content.overview!!}")
-                Button(
-                    onClick = {
-                        onePickViewModel.resetAppState()
-                    }
+                Column(
+                    modifier = Modifier.padding(
+                        start = dimensionResource(id = R.dimen.padding_small),
+                        end = dimensionResource(id = R.dimen.padding_small),
+                        bottom = dimensionResource(id = R.dimen.padding_extraLarge)
+                    ),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("検索に戻る")
+                    Text(text = "${content.overview!!}")
                 }
             }
         }
     }
 }
 
+/**
+ * 映画の詳細(公開年、ジャンル、スコア)を表示するフォーマット
+ */
+@Composable
+fun InfoText(
+    label: String,
+    value: String,
+    labelModifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            text = label,
+            color = Color.Gray,
+            modifier = labelModifier.padding(bottom = dimensionResource(id = R.dimen.padding_small)),
+            style = typography.bodyLarge,
+        )
+        Text(
+            text = value,
+            style = typography.bodyLarge,
+            modifier = Modifier
+                .border(1.dp, Color(0xFFEEEEEE), RectangleShape)
+                .background(Color(0xFFEEEEEE))
+                .fillMaxWidth()
+        )
+    }
+}
+
+/**
+ * Intで返ってきたジャンルのリストを文字列に変換して表示するファンクション
+ */
 @Composable
 fun DisplayGenre(ids: List<Int>?) : String {
-    val textList = ids?.mapNotNull { id ->
+    val textList = ids?.map { id ->
         val genre = genres.find { it.id == id }
         genre?.name
     }
-
     // テキストのリストをスペースで結合して文字列にする
     return textList?.joinToString("／") ?: ""
+}
+
+/**
+ * 検索結果を閉じる際のボタン
+ */
+@Composable
+fun CloseButton(
+    onClick: () -> Unit
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier.padding(dimensionResource(id = R.dimen.padding_small))
+    ) {
+        Icon(
+            imageVector = Icons.Default.Close,
+            stringResource(id = R.string.close),
+            tint = Color.Gray,
+            modifier = Modifier.size(dimensionResource(id = R.dimen.padding_extraLarge))
+        )
+    }
 }
 
 @Preview(showBackground = true)
