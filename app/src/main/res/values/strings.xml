@@ -4,4 +4,13 @@
     <string name="label_2">例: 不器用</string>
     <string name="label_3">例: ヒューマンドラマ</string>
     <string name="label_error">キーワードを入力してください</string>
+    <string name="app_description">今の気分にぴったりな映画をおすすめします。\nキーワードを最大3つまで入力してください。</string>
+    <string name="search">Search</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
+    <string name="result_label_1">公開年</string>
+    <string name="result_label_2">ジャンル</string>
+    <string name="result_label_3">スコア (TMDB)</string>
+    <string name="close">Close</string>
+    <string name="loading_description">キーワードにマッチする映画を探しています👀</string>
 </resources>
