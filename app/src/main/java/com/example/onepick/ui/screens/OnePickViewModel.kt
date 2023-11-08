@@ -1,7 +1,5 @@
 package com.example.onepick.ui.screens
 
-import android.util.Log
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,7 +18,6 @@ import com.example.onepick.data.ChatGptRequest
 import com.example.onepick.data.Message
 import com.example.onepick.data.TmdbRepository
 import com.example.onepick.ui.OnePickUiState
-import kotlinx.coroutines.Job
 
 class OnePickViewModel(
     private val chatGptRepository: ChatGptRepository,
@@ -28,7 +25,7 @@ class OnePickViewModel(
     ) : ViewModel() {
 
     /** 最新のリクエストのステータスを保存するミュータブルなステート */
-    // UiStateを初期状態で初期化し、画面が初期状態の場合にAPI通信を行わないように制御
+    // UIStateを初期状態で初期化し、画面が初期状態の場合にAPI通信を行わないように制御
     var onePickUiState: OnePickUiState by mutableStateOf(OnePickUiState.Initial)
         private set
 
@@ -56,9 +53,9 @@ class OnePickViewModel(
                 // ChatGptApiから回答が返ってきたら、以下のファンクションを呼び出す
                 getMovieDetails(response.choices[0].message.content)
             } catch (e: IOException) {
-                OnePickUiState.Error("サーバーに接続できません。ネットワーク接続を確認してください。")
+                OnePickUiState.Error("サーバーに接続できません。\nネットワーク接続を確認してください。")
             } catch (e: HttpException) {
-                OnePickUiState.Error("サーバーエラーが発生しました。時間を置いて再試行してください。")
+                OnePickUiState.Error("サーバーエラーが発生しました。\n時間を置いて再試行してください。")
             }
         }
     }
@@ -67,22 +64,20 @@ class OnePickViewModel(
      *TmdbApi Retrofitサービスから映画の詳細を取得
      */
     private suspend fun getMovieDetails(title: String) : OnePickUiState {
-        Log.d("ViewModel", title)
         return try{
             // TmdbApiとRepositoryクラスを介して通信
             val response = tmdbRepository.getMovieDetails(title,"ja")
-            Log.d("ViewModel", response.toString())
             // TmdbApiから映画の詳細が返ってこなかったら、エラーを返す
             if (response.totalResults == 0) {
-                OnePickUiState.Error("おすすめの映画が見つかりませんでした。別のキーワードで探してみてください。")
-            // 映画の詳細をUI(ResultScreen)で表示するため、Successを返す
+                OnePickUiState.Error("おすすめの映画が見つかりませんでした。\n別のキーワードで探してみてください。")
             } else {
+                // 映画の詳細をUI(ResultScreen)で表示するため、Successを返す
                 OnePickUiState.Success(response.results[0])
             }
         } catch (e: IOException) {
-            OnePickUiState.Error("サーバーに接続できません。ネットワーク接続を確認してください。")
+            OnePickUiState.Error("サーバーに接続できません。\nネットワーク接続を確認してください。")
         } catch (e: HttpException) {
-            OnePickUiState.Error("サーバーエラーが発生しました。時間を置いて再試行してください。")
+            OnePickUiState.Error("サーバーエラーが発生しました。\n時間を置いて再試行してください。")
         }
     }
 
@@ -91,11 +86,6 @@ class OnePickViewModel(
      */
     fun resetAppState() {
         onePickUiState = OnePickUiState.Initial
-    }
-
-    private fun checkInputValue(keyword1: String, keyword2: String, keyword3: String) : Boolean {
-
-        return (keyword1.isNullOrEmpty() && keyword2.isNullOrEmpty() && keyword3.isNullOrEmpty())
     }
 
     // アプリケーションコンテナによってRepositoryをViewModelに提供することで、ViewModelがRepositoryを作成するのを回避
