@@ -1,11 +1,9 @@
 package com.example.onepick.data
 
-import com.example.onepick.BuildConfig
 import com.example.onepick.network.TmdbApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 
 interface TmdbContainer {
@@ -17,15 +15,9 @@ class DefaultTmdbContainer : TmdbContainer {
     private val baseUrl = "https://api.themoviedb.org/3/"
 
     /**
-     * OkHttpClientを初期化
-     */
-    private val okHttpClient = OkHttpClient()
-
-    /**
      * kotlinx.serializationコンバーターを使用したRetrofitビルダーを使用して、Retrofitオブジェクトを構築
      */
     private val retrofit = Retrofit.Builder()
-        //.client(okHttpClient)
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(baseUrl)
         .build()

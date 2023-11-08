@@ -2,12 +2,15 @@ package com.example.onepick.data
 
 import com.example.onepick.network.TmdbApiService
 
+/**
+ * tmdbApiから映画の詳細を取得するリポジトリ
+ */
 interface TmdbRepository {
 
     suspend fun getMovieDetails(title: String, language: String): TmdbResponse
 
     /**
-     * chatGPTApiから映画名を取得するリポジトリのネットワーク実装
+     * tmdbApiから映画の詳細を取得するリポジトリのネットワーク実装
      */
     class NetworkTmdbRepository(
         private val tmdbApiService: TmdbApiService

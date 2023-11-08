@@ -8,7 +8,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 /**
- * APIコールを作成するためのRetrofitサービスオブジェクト
+ * chatGptApiコールを作成するためのRetrofitサービスオブジェクト
  */
 interface ChatGptApiService {
     @Headers(

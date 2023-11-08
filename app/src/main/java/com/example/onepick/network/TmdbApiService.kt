@@ -6,6 +6,9 @@ import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
 
+/**
+ * tmdbApiコールを作成するためのRetrofitサービスオブジェクト
+ */
 interface TmdbApiService {
     @Headers(
         "Authorization: Bearer ${BuildConfig.TMDB_API_KEY}"
