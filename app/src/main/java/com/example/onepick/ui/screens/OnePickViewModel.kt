@@ -1,5 +1,6 @@
 package com.example.onepick.ui.screens
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,12 +17,14 @@ import retrofit2.HttpException
 import java.io.IOException
 import com.example.onepick.data.ChatGptRequest
 import com.example.onepick.data.Message
+import com.example.onepick.data.ServerRepository
 import com.example.onepick.data.TmdbRepository
 import com.example.onepick.ui.OnePickUiState
 
 class OnePickViewModel(
     private val chatGptRepository: ChatGptRepository,
-    private val tmdbRepository: TmdbRepository
+    private val tmdbRepository: TmdbRepository,
+    private val serverRepository: ServerRepository
     ) : ViewModel() {
 
     /** 最新のリクエストのステータスを保存するミュータブルなステート */
@@ -60,6 +63,28 @@ class OnePickViewModel(
         }
     }
 
+    fun getMovieTitle(keyword1: String, keyword2: String, keyword3: String) {
+        // coroutineを使用してAPI通信をトリガーし、適切な状態に変更する
+        viewModelScope.launch {
+            // UIStateをInitialからLoadingに変更
+            onePickUiState = OnePickUiState.Loading
+            // API通信が成功すればSuccessを、失敗すればErrorを返す
+            onePickUiState = try {
+                // ChatGptApiとRepositoryクラスを介して通信
+                //val response = serverRepository.getMovieTitle(keyword1, keyword2, keyword3)
+                val response = serverRepository.getHello()
+                // ChatGptApiから回答が返ってきたら、以下のファンクションを呼び出す
+                getMovieDetails(response)
+            } catch (e: IOException) {
+                Log.e("Network Error", "IOException: ${e.message}", e)
+                OnePickUiState.Error("サーバーに接続できません。\nネットワーク接続を確認してください。")
+            } catch (e: HttpException) {
+                OnePickUiState.Error("サーバーエラーが発生しました。\n時間を置いて再試行してください。")
+            }
+        }
+
+    }
+
     /**
      *TmdbApi Retrofitサービスから映画の詳細を取得
      */
@@ -96,7 +121,8 @@ class OnePickViewModel(
                 val application = (this[APPLICATION_KEY] as OnePickApplication)
                 val chatGptRepository = application.chatGptContainer.chatGptRepository
                 val tmdbRepository = application.tmdbContainer.tmdbRepository
-                OnePickViewModel(chatGptRepository = chatGptRepository, tmdbRepository = tmdbRepository)
+                val serverRepository = application.serverContainer.serverRepository
+                OnePickViewModel(chatGptRepository = chatGptRepository, tmdbRepository = tmdbRepository, serverRepository = serverRepository)
             }
         }
     }
