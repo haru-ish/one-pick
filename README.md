@@ -3,11 +3,13 @@
 <br>
 ## 概要
 **One Pick** は「今のあなたの気分にぴったり」な映画をオススメするAndroidアプリです。<br>
-最大3つのキーワードを入力するだけで、関連する映画を1つピックアップし、レコメンドします。映画の詳細については、画面より確認することができます。
+最大3つのキーワードを入力するだけで関連する映画を1つピックアップし、レコメンドします。映画の詳細については画面より確認することができます。
 <br>
 ## アプリの使い方
-<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_1.png" width="240" /><br>
-1. キーワード（最大3つまで）を入力し、「Search」ボタンをタップします。<br>*1つのキーワードあたり、10文字まで入力可能です。<br>*全キーワード未入力は許可されていません。<br>
+| ---- | ---- |
+| <img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_1.png" width="240" /> | 1. キーワード（最大3つまで）を入力し、「Search」ボタンをタップします。<br>*1つのキーワードあたり、10文字まで入力可能です。<br>*全キーワード未入力は許可されていません。 |
+<br>
+
 <img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_2.png" width="240" /><br>
 2. 検索中です。少し待ちます。<br>
 <img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_3.png" width="240" /><br>
