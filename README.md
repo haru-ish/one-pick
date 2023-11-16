@@ -13,7 +13,7 @@
 |<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_3.png" width="240"/>|3. オススメの映画が1つピックアップされました。映画の詳細を確認してください。検索画面に戻りたい場合は、画面右上の「X」ボタンをタップします。|
 
 ### 動画で確認
-<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/howto_small.gif" width="240" />
+<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/howto_large.gif" width="240" />
 
 ## 技術スタック
 ### 開発言語 / フレームワーク / ライブラリ etc
@@ -24,12 +24,12 @@ MVVM
 GitHub
 
 ## ローカル環境での実行
-### （オプション）事前準備
+### 事前準備
 1. Android Studioをインストールする<br>
 https://developer.android.com/studio/install?hl=ja
 
-2. OpenAI APIとTMDB API、それぞれのキーを取得する<br>
-`OpenAI API:` https://openai.com/<br>
+2. OpenAIとTMDBのAPIキーを取得する<br>
+`OpenAI:` https://openai.com/<br>
 `TMDB:` https://themoviedb.org
 
 ### 起動
@@ -39,8 +39,8 @@ $ git clone https://github.com/haru-ish/one-pick.git
   
 $ cd one-pick
 ```
-2. `local.properties`ファイルを作成し、OpenAI APIとTMDB APIそれぞれのキーをファイル内に指定する。このファイルを`one-pick/app`と同じ階層に追加する
-```:local.properties
+2. `local.properties`ファイルを作成し、OpenAIとTMDBそれぞれのAPIキーをファイル内に指定する。このファイルを`one-pick/app`と同じ階層に追加する
+````shell:local.properties
 // Android SDKの場所を指定（下記は例）
 sdk.dir=/Users/UserName/Library/Android/sdk
 
