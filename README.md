@@ -13,7 +13,9 @@
 |<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_3.png" width="240"/>|3. オススメの映画が1つピックアップされました。映画の詳細を確認してください。検索画面に戻りたい場合は、画面右上の「X」ボタンをタップします。|
 
 ### 動画で動作確認
-<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/howto_small.mp4" width="240" />
+<video width="240" controls>
+  <source src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/howto_small.mp4" type="video/mp4">
+</video>
 
 ## 技術スタック
 ### 開発言語 / フレームワーク / ライブラリ etc
