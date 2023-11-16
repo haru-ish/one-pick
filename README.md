@@ -12,8 +12,8 @@
 |<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_2.png" width="240"/>|2. 検索中です。少し待ちます。|
 |<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_3.png" width="240"/>|3. オススメの映画が1つピックアップされました。映画の詳細を確認してください。検索画面に戻りたい場合は、画面右上の「X」ボタンをタップします。|
 
-### 動画で確認
-<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/howto_large.gif" width="240" />
+### 動画で動作確認
+<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/howto_small.mp4" width="240" />
 
 ## 技術スタック
 ### 開発言語 / フレームワーク / ライブラリ etc
@@ -40,7 +40,8 @@ $ git clone https://github.com/haru-ish/one-pick.git
 $ cd one-pick
 ```
 2. `local.properties`ファイルを作成し、OpenAIとTMDBそれぞれのAPIキーをファイル内に指定する。このファイルを`one-pick/app`と同じ階層に追加する
-````shell:local.properties
+
+```:local.properties
 // Android SDKの場所を指定（下記は例）
 sdk.dir=/Users/UserName/Library/Android/sdk
 
@@ -48,4 +49,5 @@ sdk.dir=/Users/UserName/Library/Android/sdk
 chatgpt_api_key=your-own-openai-apiKey
 tmdb_api_key=your-own-tmdb-apiKey
 ```
+
 3. Android Studioでプロジェクトを立ち上げ、エミュレーターか実機を選択し、`Run'app'`ボタンを押下してアプリを実行する
