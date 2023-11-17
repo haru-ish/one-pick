@@ -11,6 +11,7 @@
 |<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_1.png" width="240"/>|1. キーワード（最大3つまで）を入力し、「Search」ボタンをタップします。<br>*1つのキーワードあたり、10文字まで入力可能です<br>*全キーワード未入力は許可されていません|
 |<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_2.png" width="240"/>|2. 検索中です。少し待ちます。|
 |<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_3.png" width="240"/>|3. オススメの映画が1つピックアップされました。映画の詳細を確認してください。検索画面に戻りたい場合は、画面右上の「X」ボタンをタップします。|
+|<img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_4.png" width="240"/><img src="https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/Screenshot_howto_5.png" width="240"/>|Error: サーバーとの接続に失敗もしくは入力したキーワードで映画が見つからなかった場合はエラー画面が表示されます。「Retry」ボタンをタップして検索画面に戻ってください。|
 
 ### 動画で動作確認
 ![howto-use](https://github.com/haru-ish/one-pick/blob/main/app/src/main/res/image/howto.gif)
