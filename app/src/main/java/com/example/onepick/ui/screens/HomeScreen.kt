@@ -47,7 +47,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -56,7 +55,6 @@ import com.example.onepick.R
 import com.example.onepick.model.Movie
 import com.example.onepick.model.genres
 import com.example.onepick.ui.OnePickUiState
-import com.example.onepick.ui.theme.OnePickTheme
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -130,8 +128,7 @@ fun InitialScreen(
                     isNoInput = true
                 } else {
                     // chatGptApiと通信
-                    //onePickViewModel.getMovieTitle(keyword1, keyword2, keyword3)
-                    onePickViewModel.getRecommendedMovie(keyword1, keyword2, keyword3)
+                    onePickViewModel.getMovieTitle(keyword1, keyword2, keyword3)
                 }
             }
         ) {
@@ -389,14 +386,5 @@ fun CloseButton(
             tint = Color.Gray,
             modifier = Modifier.size(dimensionResource(id = R.dimen.padding_extraLarge))
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun OnePickAppPreview() {
-    // val onePickViewModel: OnePickViewModel = viewModel(factory = OnePickViewModel.Factory)
-    OnePickTheme {
-       // InitialScreen( onePickViewModel = onePickViewModel )
     }
 }
