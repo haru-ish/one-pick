@@ -1,9 +1,6 @@
 package com.example.onepick.data
 
 import com.example.onepick.network.ServerApiService
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
@@ -13,14 +10,13 @@ interface ServerContainer {
 
 class DefaultServerContainer : ServerContainer {
 
-    private val baseUrl = "http://192.168.10.124:8080/"
+    private val baseUrl = "http://192.168.x.x:8080/api/"
 
     /**
-     * kotlinx.serializationコンバーターを使用したRetrofitビルダーを使用して、Retrofitオブジェクトを構築
+     * Retrofitビルダーを使用して、Retrofitオブジェクトを構築
      */
     private val retrofit = Retrofit.Builder()
         .addConverterFactory(ScalarsConverterFactory.create())
-        //.addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(baseUrl)
         .build()
 

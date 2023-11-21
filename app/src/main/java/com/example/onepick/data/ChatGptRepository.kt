@@ -18,4 +18,3 @@ interface ChatGptRepository {
             chatGptApiService.getRecommendedMovie(request)
     }
 }
-
