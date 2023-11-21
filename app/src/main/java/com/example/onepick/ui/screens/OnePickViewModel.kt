@@ -1,6 +1,5 @@
 package com.example.onepick.ui.screens
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -63,6 +62,9 @@ class OnePickViewModel(
         }
     }
 
+    /**
+     * httpApi Retrofitサービスから映画名を取得
+     */
     fun getMovieTitle(keyword1: String, keyword2: String, keyword3: String) {
         // coroutineを使用してAPI通信をトリガーし、適切な状態に変更する
         viewModelScope.launch {
@@ -71,12 +73,10 @@ class OnePickViewModel(
             // API通信が成功すればSuccessを、失敗すればErrorを返す
             onePickUiState = try {
                 // ChatGptApiとRepositoryクラスを介して通信
-                //val response = serverRepository.getMovieTitle(keyword1, keyword2, keyword3)
-                val response = serverRepository.getHello()
+                val response = serverRepository.getMovieTitle(keyword1, keyword2, keyword3)
                 // ChatGptApiから回答が返ってきたら、以下のファンクションを呼び出す
                 getMovieDetails(response)
             } catch (e: IOException) {
-                Log.e("Network Error", "IOException: ${e.message}", e)
                 OnePickUiState.Error("サーバーに接続できません。\nネットワーク接続を確認してください。")
             } catch (e: HttpException) {
                 OnePickUiState.Error("サーバーエラーが発生しました。\n時間を置いて再試行してください。")

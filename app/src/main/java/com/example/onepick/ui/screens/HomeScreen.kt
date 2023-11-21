@@ -130,8 +130,8 @@ fun InitialScreen(
                     isNoInput = true
                 } else {
                     // chatGptApiと通信
-                    onePickViewModel.getMovieTitle(keyword1, keyword2, keyword3)
-                    // onePickViewModel.getRecommendedMovie(keyword1, keyword2, keyword3)
+                    //onePickViewModel.getMovieTitle(keyword1, keyword2, keyword3)
+                    onePickViewModel.getRecommendedMovie(keyword1, keyword2, keyword3)
                 }
             }
         ) {

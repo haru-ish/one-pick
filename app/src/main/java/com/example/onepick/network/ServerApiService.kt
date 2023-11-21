@@ -10,8 +10,4 @@ interface ServerApiService {
         @Query("keyword2") keyword2: String,
         @Query("keyword3") keyword3: String
     ): String
-
-    @GET("hello")
-    suspend fun getHello(): String
-
 }
