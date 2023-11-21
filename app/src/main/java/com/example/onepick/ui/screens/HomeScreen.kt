@@ -270,12 +270,15 @@ fun ResultScreen(
                 Text(
                     text = "${content.title!!}",
                     fontWeight = FontWeight.Bold,
-                    style = typography.titleLarge
+                    style = typography.titleLarge,
+                    modifier = Modifier.padding(start = dimensionResource(id = R.dimen.padding_small), end = dimensionResource(id = R.dimen.padding_small))
+
                 )
                 Text(
                     text = "Original title: ${content.originalTitle!!}",
                     color = Color.Gray,
-                    style = typography.titleSmall
+                    style = typography.titleSmall,
+                    modifier = Modifier.padding(start = dimensionResource(id = R.dimen.padding_small), end = dimensionResource(id = R.dimen.padding_small))
                 )
             }
             item {
