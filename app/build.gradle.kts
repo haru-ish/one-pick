@@ -23,10 +23,8 @@ android {
         // local.propertiesの環境変数を読み込む
         val localProperties = Properties()
         localProperties.load(project.rootProject.file("local.properties").inputStream())
-        val chatGptApiKey = localProperties.getProperty("chatgpt_api_key")
         val tmdbApiKey = localProperties.getProperty("tmdb_api_key")
 
-        buildConfigField("String", "CHATGPT_API_KEY", "\"$chatGptApiKey\"")
         buildConfigField("String", "TMDB_API_KEY", "\"$tmdbApiKey\"")
     }
 
