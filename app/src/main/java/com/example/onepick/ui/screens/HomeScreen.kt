@@ -130,7 +130,6 @@ fun InitialScreen(
                     isNoInput = true
                 } else {
                     // chatGptApiと通信
-                    //onePickViewModel.getMovieTitle(keyword1, keyword2, keyword3)
                     onePickViewModel.getRecommendedMovie(keyword1, keyword2, keyword3)
                 }
             }
@@ -391,14 +390,5 @@ fun CloseButton(
             tint = Color.Gray,
             modifier = Modifier.size(dimensionResource(id = R.dimen.padding_extraLarge))
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun OnePickAppPreview() {
-    // val onePickViewModel: OnePickViewModel = viewModel(factory = OnePickViewModel.Factory)
-    OnePickTheme {
-       // InitialScreen( onePickViewModel = onePickViewModel )
     }
 }
